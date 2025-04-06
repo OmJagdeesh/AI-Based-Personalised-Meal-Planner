@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personalized Meal Planner</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <!-- Add a navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+      <div class="container">
+        <a class="navbar-brand" href="#">Meal Planner</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#mealForm">Get Started</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#results">Results</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <header class="text-center my-5">
+        <h1>Personalized Meal Planner</h1>
+        <p class="lead">
+          Get nutritionally balanced meals tailored to your body and goals
+        </p>
+      </header>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card shadow">
+            <div class="card-body">
+              <form id="mealForm">
+                <h4 class="mb-4">Personal Information</h4>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="height" class="form-label">Height (cm)</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="height"
+                      value="170"
+                      min="100"
+                      max="250"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="weight" class="form-label">Weight (kg)</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="weight"
+                      value="70"
+                      min="30"
+                      max="200"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="age" class="form-label">Age</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="age"
+                      value="30"
+                      min="1"
+                      max="120"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="gender" class="form-label">Gender</label>
+                    <select class="form-select" id="gender" required>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="activity_level" class="form-label"
+                    >Activity Level</label
+                  >
+                  <select class="form-select" id="activity_level" required>
+                    <option value="sedentary">
+                      Sedentary (little or no exercise)
+                    </option>
+                    <option value="lightly active">
+                      Lightly active (light exercise 1-3 days/week)
+                    </option>
+                    <option value="moderately active" selected>
+                      Moderately active (moderate exercise 3-5 days/week)
+                    </option>
+                    <option value="very active">
+                      Very active (hard exercise 6-7 days/week)
+                    </option>
+                    <option value="extremely active">
+                      Extremely active (very hard exercise & physical job)
+                    </option>
+                  </select>
+                </div>
+
+                <hr class="my-4" />
+
+                <h4 class="mb-4">Meal Preferences</h4>
+
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label for="carbs" class="form-label">Carbs (g)</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="carbs"
+                      value="50"
+                      min="0"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="protein" class="form-label">Protein (g)</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="protein"
+                      value="30"
+                      min="0"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label for="fat" class="form-label">Fat (g)</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="fat"
+                      value="20"
+                      min="0"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="meal_type" class="form-label">Meal Type</label>
+                  <select class="form-select" id="meal_type" required>
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch" selected>Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snack">Snack</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="cuisine_type" class="form-label"
+                    >Cuisine Type</label
+                  >
+                  <select class="form-select" id="cuisine_type" required>
+                    <option value="any" selected>Any</option>
+                    <option value="Italian">Italian</option>
+                    <option value="Mexican">Mexican</option>
+                    <option value="Asian">Asian</option>
+                    <option value="Mediterranean">Mediterranean</option>
+                    <option value="American">American</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label for="dietary_restrictions" class="form-label"
+                    >Dietary Restrictions</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="dietary_restrictions"
+                    placeholder="e.g., vegetarian, gluten-free, nut allergies"
+                  />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2">
+                  Generate Meal Plan
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="loading text-center my-5" id="loading">
+            <div
+              class="spinner-border text-primary"
+              style="width: 3rem; height: 3rem"
+              role="status"
+            >
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5 class="mt-3">Creating your personalized meal plan...</h5>
+          </div>
+
+          <div class="results" id="results" style="display: none">
+            <div class="card shadow">
+              <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Your Health Profile</h4>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <p><strong>BMI:</strong> <span id="bmiValue">-</span></p>
+                    <p>
+                      <strong>Category:</strong> <span id="bmiCategory">-</span>
+                    </p>
+                  </div>
+                  <div class="col-md-6">
+                    <p>
+                      <strong>Height:</strong>
+                      <span id="displayHeight">-</span> cm
+                    </p>
+                    <p>
+                      <strong>Weight:</strong>
+                      <span id="displayWeight">-</span> kg
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card shadow mt-4">
+              <div class="card-header bg-success text-white">
+                <h4 class="mb-0">Your Personalized Meal Plan</h4>
+              </div>
+              <div class="card-body">
+                <div id="mealPlan" class="meal-plan"></div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="alert alert-danger mt-4"
+            id="errorAlert"
+            style="display: none"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="text-center mt-5 py-4 bg-light">
+      <p class="mb-0">© 2023 Personalized Meal Planner. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/script.js"></script>
+  </body>
+</html>
