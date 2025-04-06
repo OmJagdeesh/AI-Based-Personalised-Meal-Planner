@@ -13,18 +13,12 @@ Then paste this api key in **YOUR_GEMINI_API_KEY** in [**app.py**](app.py).
 Clone the Repository:
 
 ```
-bash
-Copy
-Edit
 git clone https://github.com/OmJagdeesh/AI-Based-Personalised-Meal-Planner.git  
 ```
 
 Navigate to the Project Directory:
 
 ```
-bash
-Copy
-Edit
 cd AI-Based-Personalised-Meal-Planner
 ```
 
@@ -33,17 +27,11 @@ Install Required Dependencies:
 Ensure you have Python installed. Then, install the necessary packages:
 
 ```
-bash
-Copy
-Edit
 pip install -r requirements.txt
 ```
 Usage
 Run the Application:
 ```
-bash
-Copy
-Edit
 python app.py
 ```
 Access the Web Interface:
