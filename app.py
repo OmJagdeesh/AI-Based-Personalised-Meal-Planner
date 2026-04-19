@@ -1,25 +1,34 @@
 from flask import Flask, render_template, request, jsonify
-import google.generativeai as genai
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 import os
+from model import MealRecommender
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "static/uploads"
 
-# Configure Gemini API
-api_key = os.environ.get("GEMINI_API_KEY")
-if not api_key:
-    raise ValueError("No GEMINI_API_KEY set for Flask application. Did you forget to set it in .env?")
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel("gemini-2.5-flash")
+# Initialize PyTorch-based Meal Recommender
+print("Loading PyTorch model and dataset...")
+recommender = MealRecommender()
+print("Model loaded successfully.")
 
 
 def calculate_bmi(weight_kg, height_cm):
     height_m = height_cm / 100
     return weight_kg / (height_m**2)
+
+
+def get_bmi_category(bmi):
+    if bmi < 18.5:
+        return "Underweight"
+    elif 18.5 <= bmi < 25:
+        return "Normal weight"
+    elif 25 <= bmi < 30:
+        return "Overweight"
+    else:
+        return "Obese"
 
 
 @app.route("/")
@@ -40,48 +49,55 @@ def generate_meal():
         activity_level = data["activity_level"]
 
         # Meal preferences
-        carbs = data["carbs"]
-        protein = data["protein"]
-        fat = data["fat"]
+        carbs = float(data["carbs"])
+        protein = float(data["protein"])
+        fat = float(data["fat"])
         meal_type = data["meal_type"]
         cuisine_type = data["cuisine_type"]
         dietary_restrictions = data["dietary_restrictions"]
 
         # Calculate BMI
         bmi = calculate_bmi(weight, height)
+        
+        # Calculate target calories based on macros (4 kcal per g for carbs/protein, 9 for fat)
+        target_calories = (carbs * 4) + (protein * 4) + (fat * 9)
 
-        prompt = f"""
-        Create a personalized {meal_type} meal plan for:
-        - {gender}, {age} years old
-        - Height: {height} cm, Weight: {weight} kg (BMI: {bmi:.1f})
-        - Activity level: {activity_level}
-        - Dietary restrictions: {dietary_restrictions}
-        
-        Nutritional targets:
-        - Carbohydrates: {carbs}g
-        - Protein: {protein}g
-        - Fat: {fat}g
-        - Cuisine type: {cuisine_type}
-        
-        Include:
-        1. Meal name and description
-        2. Detailed ingredients list
-        3. Step-by-step preparation
-        4. Nutritional breakdown per serving
-        5. Health benefits specific to this person's profile
-        
-        Also calculate daily caloric requirements and macronutrient distribution.
-        Make it practical, delicious, and nutritionally balanced.
-        """
+        # Build user profile for the model
+        user_profile = {
+            "calories": target_calories,
+            "protein": protein,
+            "carbs": carbs,
+            "fat": fat,
+            "meal_type": meal_type,
+            "cuisine_type": cuisine_type,
+            "dietary_restrictions": dietary_restrictions
+        }
 
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(temperature=0.7, top_p=0.8),
-        )
+        # Query the PyTorch recommendation model
+        top_meals = recommender.recommend_meals(user_profile, top_k=3)
+
+        # Format the response as HTML
+        meal_plan_html = f"<h3>Top Recommendations for your Profile</h3>"
+        meal_plan_html += f"<p>Target Calories: {target_calories:.0f} kcal</p><hr>"
+
+        for idx, meal in enumerate(top_meals, 1):
+            meal_plan_html += f"<h4>{idx}. {meal['recipe_name']}</h4>"
+            meal_plan_html += f"<p><strong>Match Score:</strong> <span class='badge bg-success'>{meal['match_score']}%</span></p>"
+            meal_plan_html += f"<p><em>{meal['description']}</em></p>"
+            meal_plan_html += f"<ul>"
+            meal_plan_html += f"<li><strong>Cuisine:</strong> {meal['cuisine']}</li>"
+            meal_plan_html += f"<li><strong>Calories:</strong> {meal['calories']} kcal</li>"
+            meal_plan_html += f"<li><strong>Protein:</strong> {meal['protein_g']}g</li>"
+            meal_plan_html += f"<li><strong>Carbs:</strong> {meal['carbs_g']}g</li>"
+            meal_plan_html += f"<li><strong>Fat:</strong> {meal['fat_g']}g</li>"
+            meal_plan_html += f"</ul>"
+            meal_plan_html += f"<h5>Ingredients:</h5><p>{meal['ingredients']}</p>"
+            meal_plan_html += f"<h5>Instructions:</h5><p>{meal['instructions']}</p>"
+            meal_plan_html += "<hr>"
 
         return jsonify(
             {
-                "meal_plan": response.text,
+                "meal_plan": meal_plan_html,
                 "bmi": f"{bmi:.1f}",
                 "bmi_category": get_bmi_category(bmi),
             }
@@ -91,18 +107,6 @@ def generate_meal():
         return jsonify({"error": str(e)}), 500
 
 
-def get_bmi_category(bmi):
-    if bmi < 18.5:
-        return "Underweight"
-    elif 18.5 <= bmi < 25:
-        return "Normal weight"
-    elif 25 <= bmi < 30:
-        return "Overweight"
-    else:
-        return "Obese"
-
-
 if __name__ == "__main__":
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
-    app.run(debug=True)
-
+    app.run(debug=True, use_reloader=False) # disabled reloader so model doesn't load twice
