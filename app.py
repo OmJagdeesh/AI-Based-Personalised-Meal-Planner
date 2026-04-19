@@ -1,14 +1,20 @@
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 # Configure Gemini API
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
-model = genai.GenerativeModel("gemini-1.5-pro-002")
+api_key = os.environ.get("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("No GEMINI_API_KEY set for Flask application. Did you forget to set it in .env?")
+genai.configure(api_key=api_key)
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 
 def calculate_bmi(weight_kg, height_cm):
